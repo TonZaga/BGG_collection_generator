@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+import numpy as np
 import re
 import webbrowser
 from bs4 import BeautifulSoup
@@ -66,8 +67,34 @@ def remove_parentheses(text):
 df['Title'] = df['Title'].apply(remove_parentheses)
 df['Title'] = df['Title'].str.rstrip()
 
+# Remove unicode space from Status column
+df['Status'] = df['Status'].str.replace('\xa0', ' ')
+
 # Print the DataFrame to see the data
 # print(df.to_string())
+html_table = df.to_html(index=False)
+
+
+# Style the HTML table
+def highlight_colors(str):
+    if str == 'Owned':
+        return 'color: green; font-weight: bold;'
+    elif str == 'For Trade':
+        return 'color: purple; font-weight: bold;'
+    elif str == 'Want To Buy':
+        return 'color: blue; font-weight: bold;'
+    else:
+        return ''
+    
+styled_html = df.style\
+    .set_table_attributes('style="width: 100%; border-collapse: collapse; border: 1px solid black"')\
+    .set_table_styles([{'selector': 'th', 'props': [('background-color', '#000000'), ('color', '#ffffff'), ('font-weight', 'bold'), ('text-align', 'center')]}])\
+    .set_properties(**{'text-align': 'left','border': '1px solid black', 'padding': '5px'})\
+    .set_properties(subset=['Geek Rating', 'Status'], **{'text-align': 'center'})\
+    .format({'Geek Rating': '{:.2f}'})\
+    .map(highlight_colors, subset=['Status'])\
+    .hide(axis='index')\
+    .to_html()
 
 # Choice of HTML or export to CSV
 while True:
@@ -76,9 +103,8 @@ while True:
 
 # Write and display HTML file
     if upper_input == "H" :
-        BGG_collection = df.to_html(index=False)
         with open(f'BGG_{username}.html', 'w') as f:
-            f.write(BGG_collection)
+            f.write(styled_html)
             webbrowser.open(f'BGG_{username}.html')
             break
     elif upper_input == "C":
