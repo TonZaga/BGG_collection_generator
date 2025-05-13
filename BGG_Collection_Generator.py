@@ -110,11 +110,12 @@ while True:
     <title>{username}'s BGG Collection</title>
 </head>
 <body spand style="background-color: black;">
+<h1 style="color: #D3D3D3; text-align: center;">{username}'s BGG Collection</h1>
     {styled_html}
 </body>
 </html>
 """)
-            webbrowser.open(f'BGG_{username}.html')
+            webbrowser.open_new_tab(f'BGG_{username}.html')
             break
     elif upper_input == "C":
         df.to_csv(f'BGG_{username}.csv', encoding='windows-1252', index=False)
