@@ -74,7 +74,6 @@ df['Status'] = df['Status'].str.replace('\xa0', ' ')
 # print(df.to_string())
 html_table = df.to_html(index=False)
 
-
 # Style the HTML table
 def highlight_colors(str):
     if str == 'Owned':
@@ -87,9 +86,9 @@ def highlight_colors(str):
         return ''
     
 styled_html = df.style\
-    .set_table_attributes('style="width: 100%; border-collapse: collapse; border: 1px solid black"')\
-    .set_table_styles([{'selector': 'th', 'props': [('background-color', '#000000'), ('color', '#ffffff'), ('font-weight', 'bold'), ('text-align', 'center')]}])\
-    .set_properties(**{'text-align': 'left','border': '1px solid black', 'padding': '5px'})\
+    .set_table_attributes('style="width: 100%; background-color: black; color: #D3D3D3; border-collapse: collapse; border: 1px solid #D3D3D3"')\
+    .set_table_styles([{'selector': 'th', 'props': [('background-color', '#000000'), ('color', '#D3D3D3'), ('font-weight', 'bold'), ('text-align', 'center'), ('border', '1px solid #D3D3D3')]}])\
+    .set_properties(**{'text-align': 'left','border': '1px solid #D3D3D3', 'padding': '5px'})\
     .set_properties(subset=['Geek Rating', 'Status'], **{'text-align': 'center'})\
     .format({'Geek Rating': '{:.2f}'})\
     .map(highlight_colors, subset=['Status'])\
@@ -104,7 +103,17 @@ while True:
 # Write and display HTML file
     if upper_input == "H" :
         with open(f'BGG_{username}.html', 'w') as f:
-            f.write(styled_html)
+            f.write(f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{username}'s BGG Collection</title>
+</head>
+<body spand style="background-color: black;">
+    {styled_html}
+</body>
+</html>
+""")
             webbrowser.open(f'BGG_{username}.html')
             break
     elif upper_input == "C":
